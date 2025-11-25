@@ -340,7 +340,7 @@ export const articles: Article[] = [
   }
 ];
 
-slug: "kak-nauchitsya-programmirovat",
+slug: "kak-nosit-programmirovat",
     title: "Как носить программировать с нуля: пошаговый план",
     description: "Эффективный план обучения программированию для начинающих. Выбор языка, ресурсы и практические советы.",
     keywords: ["программирование", "обучение", "с нуля", "как начать", "кодинг"],
