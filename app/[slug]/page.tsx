@@ -54,32 +54,45 @@ export async function generateStaticParams() {
 // Преобразование Markdown в HTML (простая версия)
 function markdownToHtml(markdown: string) {
   let html = markdown;
-  
+
   // Заголовки
-  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-  
+  html = html.replace(/^### (.*)$/gim, "<h3>$1</h3>");
+  html = html.replace(/^## (.*)$/gim, "<h2>$1</h2>");
+  html = html.replace(/^# (.*)$/gim, "<h1>$1</h1>");
+
   // Жирный текст
-  html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
-  
+  html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
+
   // Курсив
-  html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
-  
-  // Списки
-  html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
-  html = html.replace(/(<li>.*<\/li>)/gis, '<ul>$1</ul>');
-  
+  html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
+
+  // Списки: сначала превращаем "- пункт" → "<li>пункт</li>"
+  html = html.replace(/^\- (.*)$/gim, "<li>$1</li>");
+
+  // Оборачиваем последовательности li в <ul>...</ul>
+  html = html.replace(
+    /(?:<li>[\s\S]*?<\/li>)(?:\n?<li>[\s\S]*?<\/li>)*/gim,
+    (match) => `<ul>${match}</ul>`
+  );
+
   // Параграфы
-  html = html.split('\n\n').map(paragraph => {
-    if (paragraph.startsWith('<h') || paragraph.startsWith('<ul') || paragraph.startsWith('<li')) {
-      return paragraph;
-    }
-    return `<p>${paragraph}</p>`;
-  }).join('\n');
-  
+  html = html
+    .split("\n\n")
+    .map((paragraph) => {
+      if (
+        paragraph.startsWith("<h") ||
+        paragraph.startsWith("<ul") ||
+        paragraph.startsWith("<li")
+      ) {
+        return paragraph;
+      }
+      return `<p>${paragraph}</p>`;
+    })
+    .join("\n");
+
   return html;
 }
+
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
